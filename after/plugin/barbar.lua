@@ -1,4 +1,5 @@
 -- Set barbar's options
+require("scope").setup()
 require'bufferline'.setup()
 
 local map = vim.api.nvim_set_keymap
@@ -18,3 +19,8 @@ map('n', '<A-c>', '<Cmd>BufferClose<CR>', opts)
 --                 :BufferWipeout
 -- Magic buffer-picking mode
 map('n', '<C-p>', '<Cmd>BufferPick<CR>', opts)
+
+-- Open a new nvim tab
+map('n', '<A-t>', '<Cmd>tabnew<CR>', opts)
+-- Close current nvim tab
+map('n', '<A-S-c>', '<Cmd>tabclose<CR>', opts)

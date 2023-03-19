@@ -27,7 +27,13 @@ require("catppuccin").setup({
         information = { "underline" },
       },
     },
+    dap = {
+      enabled = true,
+      enable_ui = true, -- enable nvim-dap-ui
+    },
     treesitter = true,
+    treesitter_context = true,
+    lsp_trouble = true,
     gitsigns = true,
     nvimtree = true,
     telescope = true,

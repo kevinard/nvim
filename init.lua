@@ -40,7 +40,8 @@ require('packer').startup(function(use)
 
   use { -- Autocompletion
     'hrsh7th/nvim-cmp',
-    requires = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip', 'hrsh7th/cmp-buffer', 'hrsh7th/cmp-path', 'hrsh7th/cmp-cmdline', 'ray-x/cmp-treesitter' },
+    requires = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip', 'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path', 'hrsh7th/cmp-cmdline', 'ray-x/cmp-treesitter' },
   }
 
   use { -- Highlight, edit, and navigate code
@@ -91,9 +92,14 @@ require('packer').startup(function(use)
 
   -- Fuzzy Finder (files, lsp, etc)
   use { 'nvim-telescope/telescope.nvim', branch = '0.1.x', requires = { 'nvim-lua/plenary.nvim' } }
+  use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
+  use { "debugloop/telescope-undo.nvim" }
+  use { "folke/trouble.nvim" }
+  -- use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"} }
 
   use 'ray-x/go.nvim'
   use "alker0/chezmoi.vim"
+  use "tiagovla/scope.nvim"
 
   if is_bootstrap then
     require('packer').sync()
@@ -146,9 +152,8 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 
 -- Remove trailing spaces before saving file
 local trailingspaces_group = vim.api.nvim_create_augroup('TrailingSpaces', {})
-vim.api.nvim_create_autocmd({"BufWritePre"}, {
+vim.api.nvim_create_autocmd({ "BufWritePre" }, {
   group = trailingspaces_group,
   pattern = "*",
   command = [[%s/\s\+$//e]],
 })
-

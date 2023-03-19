@@ -50,9 +50,6 @@ vim.keymap.set("n", ";", ":", { nowait = true })
 -- toggle showing blank caracters
 vim.keymap.set("n", "<leader>s", ":set nolist!<CR>")
 
--- format the file
-vim.keymap.set("n", "<leader>fm", vim.lsp.buf.format)
-
 -- Indent the file
 vim.keymap.set("n", "<leader>m", "mZgg=G'Z")
 

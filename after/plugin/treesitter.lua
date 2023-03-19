@@ -16,7 +16,7 @@ require('nvim-treesitter.configs').setup {
     keymaps = {
       init_selection = '<c-space>',
       node_incremental = '<c-space>',
-      scope_incremental = '<c-s>',
+      scope_incremental = '<c-space>',
       node_decremental = '<c-backspace>',
     },
   },
@@ -24,6 +24,34 @@ require('nvim-treesitter.configs').setup {
     enable = true,
   },
   textobjects = {
+    lsp_interop = {
+      enable = true,
+      peek_definition_code = {
+        ["DF"] = "@function.outer",
+      },
+    },
+    keymaps = {
+      ["iL"] = {
+        -- you can define your own textobjects directly here
+        go = "(function_definition) @function",
+      },
+      -- or you use the queries from supported languages with textobjects.scm
+      ["af"] = "@function.outer",
+      ["if"] = "@function.inner",
+      ["aC"] = "@class.outer",
+      ["iC"] = "@class.inner",
+      ["ac"] = "@conditional.outer",
+      ["ic"] = "@conditional.inner",
+      ["ae"] = "@block.outer",
+      ["ie"] = "@block.inner",
+      ["al"] = "@loop.outer",
+      ["il"] = "@loop.inner",
+      ["is"] = "@statement.inner",
+      ["as"] = "@statement.outer",
+      ["ad"] = "@comment.outer",
+      ["am"] = "@call.outer",
+      ["im"] = "@call.inner"
+    },
     select = {
       enable = true,
       lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim

@@ -1,6 +1,6 @@
 -- LSP settings.
 --  This function gets run when an LSP connects to a particular buffer.
-local on_attach = function(_, bufnr)
+local on_attach = function(client, bufnr)
   -- NOTE: Remember that lua is a real programming language, and as such it is possible
   -- to define small helper and utility functions so you don't have to repeat yourself
   -- many times.
@@ -15,19 +15,24 @@ local on_attach = function(_, bufnr)
     vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
   end
 
-  nmap('<leader>ra', vim.lsp.buf.rename, '[R]e[n]ame')
+  if client.name == 'gopls' then
+    nmap('<leader>ra', require('go.rename').run, '[R]e[n]ame')
+  else
+    nmap('<leader>ra', vim.lsp.buf.rename, '[R]e[n]ame')
+  end
   nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+  vim.keymap.set('x', '<leader>ca', vim.lsp.buf.code_action, { buffer = bufnr })
 
-  nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
+  nmap('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
   nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-  nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
-  nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
+  nmap('gi', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+  nmap('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
   -- See `:help K` for why this keymap
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-  nmap('<C-f>', vim.lsp.buf.signature_help, 'Signature Documentation')
+  nmap('gs', vim.lsp.buf.signature_help, 'Signature Documentation')
 
   -- Lesser used LSP functionality
   nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
@@ -41,7 +46,42 @@ local on_attach = function(_, bufnr)
   nmap('[d', vim.diagnostic.goto_prev)
   nmap(']d', vim.diagnostic.goto_next)
   nmap('<leader>e', vim.diagnostic.open_float)
-  nmap('<leader>q', vim.diagnostic.setloclist)
+  nmap('<leader>q', function()
+    require('telescope.builtin').diagnostics({ bufnr = 0 })
+  end)
+
+  -- format the file
+  if client.server_capabilities.documentFormattingProvider then
+    nmap('<leader>fm', vim.lsp.buf.format)
+    vim.keymap.set('x', '<leader>fm', vim.lsp.buf.format, { buffer = bufnr })
+  end
+  -- if client.supports_method("textDocument/formatting") then
+  --   vim.keymap.set("n", "<Leader>f", function()
+  --     vim.lsp.buf.format({ bufnr = vim.api.nvim_get_current_buf() })
+  --   end, { buffer = bufnr, desc = "[lsp] format" })
+  --
+  --   -- format on save
+  --   vim.api.nvim_clear_autocmds({ buffer = bufnr, group = group })
+  --   vim.api.nvim_create_autocmd(event, {
+  --     buffer = bufnr,
+  --     group = group,
+  --     callback = function()
+  --       vim.lsp.buf.format({ bufnr = bufnr, async = async })
+  --     end,
+  --     desc = "[lsp] format on save",
+  --   })
+  -- end
+  --
+  -- if client.supports_method("textDocument/rangeFormatting") then
+  --   vim.keymap.set("x", "<Leader>f", function()
+  --     vim.lsp.buf.format({ bufnr = vim.api.nvim_get_current_buf() })
+  --   end, { buffer = bufnr, desc = "[lsp] format" })
+  -- end
+
+  -- Create a command `:Format` local to the LSP buffer
+  vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
+    vim.lsp.buf.format()
+  end, { desc = 'Format current buffer with LSP' })
 
   local function lspSymbol(name, icon)
     local hl = "DiagnosticSign" .. name
@@ -60,6 +100,7 @@ local on_attach = function(_, bufnr)
     signs = true,
     underline = true,
     update_in_insert = false,
+    severity_sort = true,
   }
 
   vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
@@ -93,16 +134,29 @@ local on_attach = function(_, bufnr)
     return opts
   end
 
-  -- Create a command `:Format` local to the LSP buffer
-  vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
-    vim.lsp.buf.format()
-  end, { desc = 'Format current buffer with LSP' })
+
+  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+  if client.server_capabilities.codeLensProvider then
+    vim.api.nvim_set_hl(0, 'LspCodeLens', { link = 'WarningMsg', default = true })
+    vim.api.nvim_set_hl(0, 'LspCodeLensText', { link = 'WarningMsg', default = true })
+    vim.api.nvim_set_hl(0, 'LspCodeLensSign', { link = 'WarningMsg', default = true })
+    vim.api.nvim_set_hl(0, 'LspCodeLensSeparator', { link = 'Boolean', default = true })
+    vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI', 'InsertLeave' }, {
+      group = vim.api.nvim_create_augroup('codelenses', {}),
+      buffer = bufnr,
+      callback = function()
+        vim.lsp.codelens.refresh()
+      end,
+    })
+    nmap('<leader>cl', vim.lsp.codelens.run, '[C]ode [L]ens')
+  end
 end
 
 --
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem = {
+local lspconfig = require('lspconfig')
+local base_capabilities = lspconfig.util.default_config.capabilities
+base_capabilities.textDocument.completion.completionItem = {
   documentationFormat = { "markdown", "plaintext" },
   snippetSupport = true,
   preselectSupport = true,
@@ -120,7 +174,7 @@ capabilities.textDocument.completion.completionItem = {
   },
 }
 
-capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+local capabilities = require('cmp_nvim_lsp').default_capabilities(base_capabilities)
 
 -- Setup mason so it can manage external tooling
 require('mason').setup {
@@ -165,6 +219,22 @@ local servers = {
         parameterNames = true,
         rangeVariableTypes = true,
       },
+      analyses = { unusedparams = true, unreachable = false },
+      codelenses = {
+        generate = true, -- show the `go generate` lens.
+        gc_details = true, --  // Show a code lens toggling the display of gc's choices.
+        test = true,
+        tidy = true
+      },
+      usePlaceholders = true,
+      completeUnimported = true,
+      staticcheck = true,
+      matcher = "fuzzy",
+      diagnosticsDelay = "500ms",
+      symbolMatcher = "fuzzy",
+      gofumpt = false, -- true, -- turn on for new repos, gofmpt is good but also create code turmoils
+      buildFlags = { "-tags", "integration" },
+      ['local'] = 'github.com/Scalingo',
     },
   },
   jsonls = {},
@@ -187,6 +257,7 @@ local servers = {
         -- Get the language server to recognize the `vim` global
         globals = { "vim" },
       },
+      completion = { callSnippet = "Both" },
       workspace = {
         checkThirdParty = false,
         -- Make the server aware of Neovim runtime files
@@ -206,7 +277,6 @@ mason_lspconfig.setup {
   ensure_installed = vim.tbl_keys(servers),
 }
 
-local lspconfig = require('lspconfig')
 local get_servers = mason_lspconfig.get_installed_servers
 
 for _, server_name in ipairs(get_servers()) do
@@ -220,14 +290,18 @@ end
 require 'go'.setup({
   goimport = 'gopls', -- if set to 'gopls' will use golsp format
   gofmt = 'gopls', -- if set to gopls will use golsp format
-  max_line_len = 120,
-  tag_transform = false,
-  test_dir = '',
-  comment_placeholder = '   ',
-  lsp_cfg = true, -- false: use your own lspconfig
+  lsp_cfg = false,
   lsp_gofumpt = true, -- true: set default gofmt in gopls format to gofumpt
-  lsp_on_attach = true, -- use on_attach from go.nvim
   dap_debug = true,
+})
+
+local format_sync_grp = vim.api.nvim_create_augroup("GoFormat", {})
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*.go",
+  callback = function()
+    require('go.format').goimport()
+  end,
+  group = format_sync_grp,
 })
 
 -- Turn on lsp status information
@@ -305,6 +379,7 @@ cmp.setup {
     end,
   },
   formatting = {
+    fields = { 'abbr', 'menu', 'kind' },
     format = function(entry, vim_item)
       -- Kind icons
       vim_item.kind = string.format("%s %s", kind_icons[vim_item.kind], vim_item.kind) -- This concatonates the icons with the name of the item kind
@@ -331,12 +406,15 @@ cmp.setup {
       select = true,
     },
     ['<Tab>'] = cmp.mapping(function(fallback)
+      local col = vim.fn.col('.') - 1
       if cmp.visible() then
         cmp.select_next_item()
       elseif luasnip.expand_or_jumpable() then
         luasnip.expand_or_jump()
-      else
+      elseif col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
         fallback()
+      else
+        cmp.complete()
       end
     end, { 'i', 's' }),
     ['<S-Tab>'] = cmp.mapping(function(fallback)
@@ -370,8 +448,8 @@ cmp.setup.cmdline(":", {
   sources = cmp.config.sources({
     { name = "path" },
   }, {
-      { name = "cmdline" },
-    }),
+    { name = "cmdline" },
+  }),
 })
 
 require("nvim-autopairs").setup {}
@@ -379,4 +457,3 @@ cmp.event:on(
   'confirm_done',
   require('nvim-autopairs.completion.cmp').on_confirm_done()
 )
-
