@@ -3,6 +3,7 @@
 -- disable some builtin vim plugins
 local default_plugins = {
   "2html_plugin",
+  "tohtml",
   "getscript",
   "getscriptPlugin",
   "gzip",
@@ -74,6 +75,7 @@ vim.opt.showmode = false
 vim.opt.title = true
 vim.opt.clipboard = "unnamedplus"
 vim.opt.cursorline = true
+vim.opt.ruler = false
 
 -- Indenting
 vim.opt.expandtab = true
@@ -101,4 +103,4 @@ vim.opt.timeoutlen = 400
 vim.opt.whichwrap:append "<>[]hl"
 
 -- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menuone,noselect'
+vim.o.completeopt = 'menuone,preview,noinsert,noselect'

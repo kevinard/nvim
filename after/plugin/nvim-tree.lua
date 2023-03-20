@@ -1,25 +1,42 @@
 -- Tree
+local function on_attach(bufnr)
+  local api = require('nvim-tree.api')
+
+  local function opts(desc)
+    return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+  end
+
+  api.config.mappings.default_on_attach(bufnr)
+
+  vim.keymap.set('n', '?', api.tree.toggle_help, opts('Help'))
+end
+
 require("nvim-tree").setup {
+  on_attach = on_attach,
   filters = {
     dotfiles = false,
     custom = { "^.git$" },
   },
   disable_netrw = true,
   hijack_netrw = true,
-  open_on_setup = false,
   hijack_cursor = true,
   hijack_unnamed_buffer_when_opening = false,
-  update_cwd = true,
+  sync_root_with_cwd = true,
+  select_prompts = true,
   update_focused_file = {
     enable = true,
-    update_cwd = false,
+    update_root = false,
+  },
+  live_filter = {
+    always_show_folders = false,
   },
   view = {
-    adaptive_size = true,
+    adaptive_size = false,
     side = "left",
-    width = 25,
-    hide_root_folder = true,
+    width = 30,
+    hide_root_folder = false,
     signcolumn = "yes",
+    preserve_window_proportions = true,
   },
   git = {
     enable = true,
@@ -51,38 +68,43 @@ require("nvim-tree").setup {
   },
   renderer = {
     group_empty = true,
-    highlight_git = true,
-    highlight_opened_files = "icon",
-
+    full_name = true,
+    highlight_git = false,
+    highlight_opened_files = "none",
+    root_folder_label = function(path)
+      return vim.fn.fnamemodify(path, ":t:s?$?/..?")
+    end,
+    indent_width = 2,
     indent_markers = {
       enable = true,
+      inline_arrows = true,
+      -- icons = { corner = "└", edge = "│", item = "│", bottom = "─", none = " ", },
+      icons = { corner = "▏", edge = "▏", item = "▏", bottom = "▏", none = " ", },
     },
-
     icons = {
       show = {
         file = true,
         folder = true,
-        folder_arrow = true,
+        folder_arrow = false,
         git = true,
       },
-
       glyphs = {
         default = "",
         symlink = "",
         folder = {
           default = "",
           empty = "",
-          empty_open = "",
-          open = "",
+          empty_open = "",
+          open = "",
           symlink = "",
-          symlink_open = "",
+          symlink_open = "",
           arrow_open = "",
           arrow_closed = "",
         },
         git = {
           unstaged = "✗",
           staged = "✓",
-          unmerged = "",
+          unmerged = "",
           renamed = "➜",
           untracked = "★",
           deleted = "",
@@ -101,7 +123,7 @@ local nvim_tree_events = require('nvim-tree.events')
 local bufferline_api = require('bufferline.api')
 
 local function get_tree_size()
-  return require'nvim-tree.view'.View.width
+  return require 'nvim-tree.view'.View.width
 end
 
 nvim_tree_events.subscribe('TreeOpen', function()
@@ -115,13 +137,3 @@ end)
 nvim_tree_events.subscribe('TreeClose', function()
   bufferline_api.set_offset(0)
 end)
-
--- -- Close tree if it is the last window open
--- vim.api.nvim_create_autocmd("BufEnter", {
---   group = vim.api.nvim_create_augroup("NvimTreeClose", {clear = true}),
---   pattern = "NvimTree_*",
---   callback = function()
---     local layout = vim.api.nvim_call_function("winlayout", {})
---     if layout[1] == "leaf" and vim.api.nvim_buf_get_option(vim.api.nvim_win_get_buf(layout[2]), "filetype") == "NvimTree" and layout[3] == nil then vim.cmd("confirm quit") end
---   end
--- })

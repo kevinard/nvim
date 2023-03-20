@@ -38,10 +38,9 @@ require('telescope').setup {
       preview_cutoff = 120,
     },
     file_ignore_patterns = { "node_modules" },
-    path_display = { "truncate" },
+    -- path_display = { "truncate" },
+    path_display = { "smart" },
     winblend = 0,
-    border = {},
-    borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
     color_devicons = true,
     set_env = { ["COLORTERM"] = "truecolor" }, -- default = nil,
     mappings = {
@@ -102,6 +101,7 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 vim.keymap.set('n', '<leader>gs', require('telescope.builtin').git_status, { desc = '[G]it [S]tatus' })
 vim.keymap.set('n', '<leader>gb', require('telescope.builtin').git_branches, { desc = '[G]it [S]tatus' })
 vim.keymap.set('n', '<leader>su', require("telescope").extensions.undo.undo, { desc = '[S]earch [U]ndo' })
+vim.keymap.set('n', '<leader>s<CR>', require('telescope.builtin').resume, { desc = 'Resume previous [S]earch<CR>' })
 
 
 vim.keymap.set("n", "<leader>xx", "<cmd>TroubleToggle<cr>",

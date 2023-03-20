@@ -125,15 +125,7 @@ local on_attach = function(client, bufnr)
   end
 
   -- Borders for LspInfo window
-  local win = require "lspconfig.ui.windows"
-  local _default_opts = win.default_opts
-
-  win.default_opts = function(options)
-    local opts = _default_opts(options)
-    opts.border = "single"
-    return opts
-  end
-
+  require('lspconfig.ui.windows').default_options.border = 'single'
 
   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
   if client.server_capabilities.codeLensProvider then
@@ -180,11 +172,10 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities(base_capabilit
 require('mason').setup {
   ui = {
     icons = {
-      package_pending = " ",
-      package_installed = " ",
-      package_uninstalled = " ﮊ",
+      package_installed = "✓",
+      package_uninstalled = "✗",
+      package_pending = "⟳",
     },
-
     keymaps = {
       toggle_server_expand = "<CR>",
       install_server = "i",
@@ -219,15 +210,16 @@ local servers = {
         parameterNames = true,
         rangeVariableTypes = true,
       },
-      analyses = { unusedparams = true, unreachable = false },
+      analyses = { unusedparams = true, unreachable = false, shadow = true },
       codelenses = {
-        generate = true, -- show the `go generate` lens.
+        generate = true,   -- show the `go generate` lens.
         gc_details = true, --  // Show a code lens toggling the display of gc's choices.
         test = true,
         tidy = true
       },
       usePlaceholders = true,
       completeUnimported = true,
+      experimentalPostfixCompletions = true,
       staticcheck = true,
       matcher = "fuzzy",
       diagnosticsDelay = "500ms",
@@ -289,7 +281,7 @@ end
 
 require 'go'.setup({
   goimport = 'gopls', -- if set to 'gopls' will use golsp format
-  gofmt = 'gopls', -- if set to gopls will use golsp format
+  gofmt = 'gopls',    -- if set to gopls will use golsp format
   lsp_cfg = false,
   lsp_gofumpt = true, -- true: set default gofmt in gopls format to gofumpt
   dap_debug = true,
@@ -315,36 +307,17 @@ require('fidget').setup {
 local cmp = require 'cmp'
 local luasnip = require 'luasnip'
 
-local function border(hl_name)
-  return {
-    { "╭", hl_name },
-    { "─", hl_name },
-    { "╮", hl_name },
-    { "│", hl_name },
-    { "╯", hl_name },
-    { "─", hl_name },
-    { "╰", hl_name },
-    { "│", hl_name },
-  }
-end
-
-local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
-function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
-  opts = opts or {}
-  opts.border = opts.border or border "FloatBorder"
-  return orig_util_open_floating_preview(contents, syntax, opts, ...)
-end
-
 local kind_icons = {
-  Text = "",
+  Namespace = "",
+  Text = "",
   Method = "",
   Function = "",
   Constructor = "",
-  Field = "",
+  Field = "ﰠ ",
   Variable = "",
   Class = "ﴯ",
   Interface = "",
-  Module = "",
+  Module = " ",
   Property = "ﰠ",
   Unit = "",
   Value = "",
@@ -353,7 +326,7 @@ local kind_icons = {
   Snippet = "",
   Color = "",
   File = "",
-  Reference = "",
+  Reference = " ",
   Folder = "",
   EnumMember = "",
   Constant = "",
@@ -361,16 +334,34 @@ local kind_icons = {
   Event = "",
   Operator = "",
   TypeParameter = "",
+  Table = "",
+  Object = " ",
+  Tag = "",
+  Array = "[]",
+  Boolean = " ",
+  Number = " ",
+  Null = "ﳠ",
+  String = " ",
+  Calendar = "",
+  Watch = " ",
+  Package = "",
+  Copilot = " ",
 }
 
 cmp.setup {
+  completion = {
+    completeopt = vim.o.completeopt,
+  },
   window = {
     completion = {
-      border = border "CmpBorder",
-      winhighlight = "Normal:CmpPmenu,CursorLine:PmenuSel,Search:None",
+      border = "single",
+      winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
+      side_padding = 1,
+      scrollbar = false,
     },
     documentation = {
-      border = border "CmpDocBorder",
+      border = "single",
+      winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
     },
   },
   snippet = {
@@ -379,20 +370,9 @@ cmp.setup {
     end,
   },
   formatting = {
-    fields = { 'abbr', 'menu', 'kind' },
-    format = function(entry, vim_item)
-      -- Kind icons
-      vim_item.kind = string.format("%s %s", kind_icons[vim_item.kind], vim_item.kind) -- This concatonates the icons with the name of the item kind
-      -- Source
-      vim_item.menu = ({
-        nvim_lsp = "[LSP]",
-        buffer = "[Buffer]",
-        luasnip = "[Snip]",
-        nvim_lua = "[Lua]",
-        treesitter = "[Treesitter]",
-        path = "[Path]",
-        nvim_lsp_signature_help = "[Signature]",
-      })[entry.source.name]
+    fields = { 'abbr', 'kind', 'menu' },
+    format = function(_, vim_item)
+      vim_item.kind = string.format("%s  %s", kind_icons[vim_item.kind], vim_item.kind)
       return vim_item
     end,
   },
@@ -403,7 +383,7 @@ cmp.setup {
     ['<C-e>'] = cmp.mapping.close(),
     ['<CR>'] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
-      select = true,
+      select = false,
     },
     ['<Tab>'] = cmp.mapping(function(fallback)
       local col = vim.fn.col('.') - 1
@@ -452,7 +432,21 @@ cmp.setup.cmdline(":", {
   }),
 })
 
-require("nvim-autopairs").setup {}
+require("nvim-autopairs").setup {
+  check_ts = true,
+  enable_check_bracket_line = false,
+  fast_wrap = {
+    map = "<M-e>",
+    chars = { "{", "[", "(", '"', "'" },
+    pattern = string.gsub([[ [%'%"%)%>%]%)%}%,] ]], "%s+", ""),
+    offset = 0,
+    end_key = "$",
+    keys = "qwertyuiopzxcvbnmasdfghjkl",
+    check_comma = true,
+    highlight = "PmenuSel",
+    highlight_grey = "LineNr",
+  },
+}
 cmp.event:on(
   'confirm_done',
   require('nvim-autopairs.completion.cmp').on_confirm_done()

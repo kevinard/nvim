@@ -15,7 +15,7 @@ require('packer').init {
 
   display = {
     open_fn = function()
-      return require("packer.util").float { border = "rounded" }
+      return require("packer.util").float { border = "single" }
     end,
   },
 }
@@ -61,7 +61,7 @@ require('packer').startup(function(use)
   use 'lewis6991/gitsigns.nvim'
   use { 'sindrets/diffview.nvim', requires = 'nvim-lua/plenary.nvim' }
 
-  use { -- Add/change/delete surrounding delimiter pairs with ease
+  use {        -- Add/change/delete surrounding delimiter pairs with ease
     'kylechui/nvim-surround',
     tag = "*", -- Use for stability; omit to use `main` branch for the latest features
   }
@@ -81,13 +81,13 @@ require('packer').startup(function(use)
   }
 
   use 'stevearc/dressing.nvim'
-  use { 'catppuccin/nvim', as = 'catppuccin' } -- Catppuccin Theme
+  use { 'catppuccin/nvim', as = 'catppuccin' }              -- Catppuccin Theme
   use 'nvim-tree/nvim-web-devicons'
   use { 'romgrk/barbar.nvim', wants = 'nvim-web-devicons' } -- Buffer/tab bar
-  use 'nvim-lualine/lualine.nvim' -- Fancier statusline
-  use 'nvim-tree/nvim-tree.lua' -- Tree
-  use 'lukas-reineke/indent-blankline.nvim' -- Add indentation guides even on blank lines
-  use 'numToStr/Comment.nvim' -- "gc" to comment visual regions/lines
+  use 'nvim-lualine/lualine.nvim'                           -- Fancier statusline
+  use 'nvim-tree/nvim-tree.lua'                             -- Tree
+  use 'lukas-reineke/indent-blankline.nvim'                 -- Add indentation guides even on blank lines
+  use 'numToStr/Comment.nvim'                               -- "gc" to comment visual regions/lines
   use 'mbbill/undotree'
 
   -- Fuzzy Finder (files, lsp, etc)
@@ -131,6 +131,21 @@ require("settings")
 require("colorscheme")
 require("mappings")
 
+require('dressing').setup {
+  input = {
+    default_prompt = "➤ ",
+    border = "single",
+    win_options = { winhighlight = "Normal:Normal,NormalNC:Normal" },
+  },
+  select = {
+    backend = { "telescope", "builtin" },
+    builtin = {
+      border = "single",
+      win_options = { winhighlight = "Normal:Normal,NormalNC:Normal" }
+    },
+  },
+}
+
 -- Automatically source and re-compile packer whenever you save this init.lua
 local packer_group = vim.api.nvim_create_augroup('Packer', { clear = true })
 vim.api.nvim_create_autocmd('BufWritePost', {
@@ -156,4 +171,21 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
   group = trailingspaces_group,
   pattern = "*",
   command = [[%s/\s\+$//e]],
+})
+
+-- dont list quickfix buffers
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "qf",
+  callback = function()
+    vim.opt_local.buflisted = false
+  end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+  desc = "Make q close help, man, quickfix, dap floats",
+  group = vim.api.nvim_create_augroup("q_close_windows", { clear = true }),
+  pattern = { "qf", "help", "man", "dap-float" },
+  callback = function(event)
+    vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = event.buf, silent = true, nowait = true })
+  end,
 })

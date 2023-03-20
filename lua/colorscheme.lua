@@ -3,7 +3,8 @@ local themeFlavour = os.getenv("CATPPUCCIN_FLAVOUR") or "mocha"
 
 require("catppuccin").setup({
   flavour = themeFlavour, -- latte, frappe, macchiato, mocha
-  background = { -- :h background
+  background = {
+    -- :h background
     light = "latte",
     dark = "mocha",
   },
@@ -53,6 +54,16 @@ require("catppuccin").setup({
       DiagnosticVirtualTextWarn = { bg = colors.none },
       DiagnosticVirtualTextInfo = { bg = colors.none },
       DiagnosticVirtualTextHint = { bg = colors.none },
+      TelescopePromptPrefix = { bg = colors.surface0, fg = colors.red },
+      TelescopePromptBorder = { bg = colors.surface0, fg = colors.surface0 },
+      TelescopePromptTitle = { fg = colors.surface0, bg = colors.red },
+      TelescopePromptNormal = { bg = colors.surface0 },
+      TelescopeResultsBorder = { bg = colors.mantle, fg = colors.mantle },
+      TelescopeResultsTitle = { fg = colors.mantle },
+      TelescopeResultsNormal = { bg = colors.mantle },
+      TelescopePreviewBorder = { bg = colors.crust, fg = colors.crust },
+      TelescopePreviewTitle = { fg = colors.crust },
+      TelescopePreviewNormal = { bg = colors.crust },
     }
   end
 })

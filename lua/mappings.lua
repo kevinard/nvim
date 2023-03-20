@@ -34,7 +34,9 @@ vim.keymap.set("n", "N", "Nzzzv")
 
 -- Better indent
 vim.keymap.set("v", "<", "<gv")
+vim.keymap.set("v", "<S-Tab>", "<gv")
 vim.keymap.set("v", ">", ">gv")
+vim.keymap.set("v", "<Tab>", ">gv")
 
 -- paste/replace over the highlighted text without replacing the paste buffer
 vim.keymap.set("x", "<leader>p", [["_dP]])
@@ -61,10 +63,6 @@ vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 
 -- Toggle undotree
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
-
--- go to  beginning and end
-vim.keymap.set("i", "<C-b>", "<ESC>^i")
-vim.keymap.set("i", "<C-e>", "<End>")
 
 -- navigate within insert mode
 vim.keymap.set("i", "<C-h>", "<Left>")
@@ -109,5 +107,5 @@ vim.keymap.set("n", "<leader>qa", "<cmd> qall <CR>")
 vim.keymap.set("n", "<leader>c", "<cmd> close <CR>")
 
 -- Open split
-vim.keymap.set("n", "<leader>sp", "<cmd> split <CR>")
-vim.keymap.set("n", "<leader>vs", "<cmd> vsplit <CR>")
+vim.keymap.set("n", "\\", "<cmd> split <CR>")
+vim.keymap.set("n", "|", "<cmd> vsplit <CR>")
