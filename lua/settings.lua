@@ -61,7 +61,7 @@ vim.o.hlsearch = true
 
 -- Decrease update time
 vim.o.updatetime = 250
-vim.wo.signcolumn = 'yes'
+vim.wo.signcolumn = 'auto:1'
 
 -- disable swapfiles and save undo history instead
 vim.opt.swapfile = false

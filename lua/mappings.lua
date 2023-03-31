@@ -47,7 +47,7 @@ vim.keymap.set({"n", "v"}, "<leader>d", [["_d]])
 vim.keymap.set("i", "<C-v>", "<C-r>+")
 
 -- command mode
-vim.keymap.set("n", ";", ":", { nowait = true })
+vim.keymap.set({"n", "x"}, ";", ":", { nowait = true })
 
 -- toggle showing blank caracters
 vim.keymap.set("n", "<leader>s", ":set nolist!<CR>")
@@ -109,3 +109,10 @@ vim.keymap.set("n", "<leader>c", "<cmd> close <CR>")
 -- Open split
 vim.keymap.set("n", "\\", "<cmd> split <CR>")
 vim.keymap.set("n", "|", "<cmd> vsplit <CR>")
+
+-- Navigate through quickfix list
+vim.keymap.set("n", "[q", "<cmd> cprev <CR>")
+vim.keymap.set("n", "]q", "<cmd> cnext <CR>")
+
+-- EasyAlign
+vim.keymap.set({"n", "x"}, "ga", "<Plug>(EasyAlign)")

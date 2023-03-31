@@ -1,6 +1,13 @@
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
-require("trouble").setup()
+require("trouble").setup({
+  padding = false,
+  use_diagnostic_signs = true,
+  action_keys = {
+    open_split = { "\\" }, -- open buffer in new split
+    open_vsplit = { "|" }, -- open buffer in new vsplit
+  },
+})
 local trouble = require("trouble.providers.telescope")
 require('telescope').setup {
   defaults = {
@@ -38,8 +45,7 @@ require('telescope').setup {
       preview_cutoff = 120,
     },
     file_ignore_patterns = { "node_modules" },
-    -- path_display = { "truncate" },
-    path_display = { "smart" },
+    path_display = { "truncate" },
     winblend = 0,
     color_devicons = true,
     set_env = { ["COLORTERM"] = "truecolor" }, -- default = nil,
@@ -47,18 +53,19 @@ require('telescope').setup {
       n = { ["q"] = require("telescope.actions").close },
       i = {
         ["<esc>"] = require("telescope.actions").close,
-        ["<c-t>"] = trouble.open_with_trouble
+        ["<c-t>"] = trouble.smart_open_with_trouble,
+        ["<C-Down>"] = require('telescope.actions').cycle_history_next,
+        ["<C-Up>"] = require('telescope.actions').cycle_history_prev,
       },
     },
   },
   pickers = {
-		find_files = {
-			-- `hidden = true` will still show the inside of `.git/` as it's not `.gitignore`d.
-			find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },
-		},
-	},
+    find_files = {
+      -- `hidden = true` will still show the inside of `.git/` as it's not `.gitignore`d.
+      find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },
+    },
+  },
 }
-
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
 pcall(require('telescope').load_extension, 'undo')
@@ -73,25 +80,25 @@ vim.keymap.set('n', '<leader>?', function()
 end, { desc = '[/] Fuzzily search in current buffer]' })
 
 vim.keymap.set('n', '<leader>sg', function()
-	local function is_git_repo()
-		vim.fn.system("git rev-parse --is-inside-work-tree")
-		return vim.v.shell_error == 0
-	end
+  local function is_git_repo()
+    vim.fn.system("git rev-parse --is-inside-work-tree")
+    return vim.v.shell_error == 0
+  end
 
-	local function get_git_root()
-		local dot_git_path = vim.fn.finddir(".git", ".;")
-		return vim.fn.fnamemodify(dot_git_path, ":h")
-	end
+  local function get_git_root()
+    local dot_git_path = vim.fn.finddir(".git", ".;")
+    return vim.fn.fnamemodify(dot_git_path, ":h")
+  end
 
-	local opts = {}
+  local opts = {}
 
-	if is_git_repo() then
-		opts = {
-			cwd = get_git_root(),
-		}
-	end
+  if is_git_repo() then
+    opts = {
+      cwd = get_git_root(),
+    }
+  end
 
-	require("telescope.builtin").live_grep(opts)
+  require("telescope.builtin").live_grep(opts)
 end, { desc = '[S]earch by [G]rep' })
 
 vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
@@ -103,22 +110,27 @@ vim.keymap.set('n', '<leader>gb', require('telescope.builtin').git_branches, { d
 vim.keymap.set('n', '<leader>su', require("telescope").extensions.undo.undo, { desc = '[S]earch [U]ndo' })
 vim.keymap.set('n', '<leader>s<CR>', require('telescope.builtin').resume, { desc = 'Resume previous [S]earch<CR>' })
 
-
 vim.keymap.set("n", "<leader>xx", "<cmd>TroubleToggle<cr>",
-  {silent = true, noremap = true}
+  { silent = true, noremap = true }
 )
 vim.keymap.set("n", "<leader>xw", "<cmd>TroubleToggle workspace_diagnostics<cr>",
-  {silent = true, noremap = true}
+  { silent = true, noremap = true }
 )
 vim.keymap.set("n", "<leader>xd", "<cmd>TroubleToggle document_diagnostics<cr>",
-  {silent = true, noremap = true}
+  { silent = true, noremap = true }
 )
 vim.keymap.set("n", "<leader>xl", "<cmd>TroubleToggle loclist<cr>",
-  {silent = true, noremap = true}
+  { silent = true, noremap = true }
 )
 vim.keymap.set("n", "<leader>xq", "<cmd>TroubleToggle quickfix<cr>",
-  {silent = true, noremap = true}
+  { silent = true, noremap = true }
 )
 vim.keymap.set("n", "gR", "<cmd>TroubleToggle lsp_references<cr>",
-  {silent = true, noremap = true}
+  { silent = true, noremap = true }
+)
+vim.keymap.set("n", "<leader>xf", "<cmd>TroubleToggle lsp_definitions<cr>",
+  { silent = true, noremap = true }
+)
+vim.keymap.set("n", "<leader>xt", "<cmd>TroubleToggle lsp_type_definitions<cr>",
+  { silent = true, noremap = true }
 )

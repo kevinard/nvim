@@ -41,7 +41,7 @@ require('packer').startup(function(use)
   use { -- Autocompletion
     'hrsh7th/nvim-cmp',
     requires = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip', 'hrsh7th/cmp-buffer',
-      'hrsh7th/cmp-path', 'hrsh7th/cmp-cmdline', 'ray-x/cmp-treesitter' },
+      'hrsh7th/cmp-path', 'hrsh7th/cmp-cmdline', 'ray-x/cmp-treesitter', 'hrsh7th/cmp-nvim-lua', 'rafamadriz/friendly-snippets' },
   }
 
   use { -- Highlight, edit, and navigate code
@@ -100,6 +100,7 @@ require('packer').startup(function(use)
   use 'ray-x/go.nvim'
   use "alker0/chezmoi.vim"
   use "tiagovla/scope.nvim"
+  use 'junegunn/vim-easy-align'
 
   if is_bootstrap then
     require('packer').sync()

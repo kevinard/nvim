@@ -90,8 +90,9 @@ local on_attach = function(client, bufnr)
 
   lspSymbol("Error", "")
   lspSymbol("Info", "")
-  lspSymbol("Hint", "")
+  lspSymbol("Hint", "")
   lspSymbol("Warn", "")
+  lspSymbol("Other", "﫠")
 
   vim.diagnostic.config {
     virtual_text = {
@@ -218,6 +219,7 @@ local servers = {
         tidy = true
       },
       usePlaceholders = true,
+      semanticTokens = true,
       completeUnimported = true,
       experimentalPostfixCompletions = true,
       staticcheck = true,
@@ -306,6 +308,9 @@ require('fidget').setup {
 -- nvim-cmp setup
 local cmp = require 'cmp'
 local luasnip = require 'luasnip'
+
+require("luasnip.loaders.from_vscode").lazy_load()
+luasnip.filetype_extend("ruby", {"rails"})
 
 local kind_icons = {
   Namespace = "",
@@ -409,6 +414,7 @@ cmp.setup {
   },
   sources = {
     { name = 'nvim_lsp' },
+    { name = 'nvim_lua' },
     { name = "treesitter" },
     { name = "buffer" },
     { name = 'luasnip' },
