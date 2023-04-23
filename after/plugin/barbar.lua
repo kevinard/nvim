@@ -18,7 +18,7 @@ map('n', '<A-c>', '<Cmd>BufferClose<CR>', opts)
 -- Wipeout buffer
 --                 :BufferWipeout
 -- Magic buffer-picking mode
-map('n', '<C-p>', '<Cmd>BufferPick<CR>', opts)
+map('n', '<A-S-p>', '<Cmd>BufferPick<CR>', opts)
 
 -- Open a new nvim tab
 map('n', '<A-t>', '<Cmd>tabnew<CR>', opts)

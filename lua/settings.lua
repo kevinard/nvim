@@ -76,6 +76,7 @@ vim.opt.title = true
 vim.opt.clipboard = "unnamedplus"
 vim.opt.cursorline = true
 vim.opt.ruler = false
+vim.opt.scrolloff = 5
 
 -- Indenting
 vim.opt.expandtab = true

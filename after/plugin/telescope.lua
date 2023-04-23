@@ -107,8 +107,9 @@ vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { de
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>gs', require('telescope.builtin').git_status, { desc = '[G]it [S]tatus' })
 vim.keymap.set('n', '<leader>gb', require('telescope.builtin').git_branches, { desc = '[G]it [S]tatus' })
-vim.keymap.set('n', '<leader>su', require("telescope").extensions.undo.undo, { desc = '[S]earch [U]ndo' })
+vim.keymap.set('n', '<leader>u', require("telescope").extensions.undo.undo, { desc = '[S]earch [U]ndo' })
 vim.keymap.set('n', '<leader>s<CR>', require('telescope.builtin').resume, { desc = 'Resume previous [S]earch<CR>' })
+vim.keymap.set('n', '<c-p>', require('telescope.builtin').keymaps, { desc = 'List keymaps' })
 
 vim.keymap.set("n", "<leader>xx", "<cmd>TroubleToggle<cr>",
   { silent = true, noremap = true }

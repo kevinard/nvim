@@ -13,7 +13,7 @@ vim.keymap.set('n', "<A-v>", "<cmd>ToggleTerm size=80 direction=vertical<cr>", {
 vim.keymap.set({'n', 't', 'i'}, "<F7>", "<cmd>ToggleTermToggleAll<cr>", { desc = "Toggle terminal" })
 
 -- escape terminal mode
-vim.keymap.set("t", "<esc>", vim.api.nvim_replace_termcodes("<C-\\><C-N>", true, true, true))
+vim.keymap.set("t", "<esc><esc>", vim.api.nvim_replace_termcodes("<C-\\><C-N>", true, true, true))
 
 -- navigate within terminal mode
 vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]])

@@ -88,7 +88,7 @@ require('packer').startup(function(use)
   use 'nvim-tree/nvim-tree.lua'                             -- Tree
   use 'lukas-reineke/indent-blankline.nvim'                 -- Add indentation guides even on blank lines
   use 'numToStr/Comment.nvim'                               -- "gc" to comment visual regions/lines
-  use 'mbbill/undotree'
+  use({ 'mrjones2014/smart-splits.nvim', run = './kitty/install-kittens.bash' })
 
   -- Fuzzy Finder (files, lsp, etc)
   use { 'nvim-telescope/telescope.nvim', branch = '0.1.x', requires = { 'nvim-lua/plenary.nvim' } }

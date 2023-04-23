@@ -16,17 +16,17 @@ local on_attach = function(client, bufnr)
   end
 
   if client.name == 'gopls' then
-    nmap('<leader>ra', require('go.rename').run, '[R]e[n]ame')
+    nmap('<F2>', require('go.rename').run, '[R]e[n]ame')
   else
-    nmap('<leader>ra', vim.lsp.buf.rename, '[R]e[n]ame')
+    nmap('<F2>', vim.lsp.buf.rename, '[R]e[n]ame')
   end
-  nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
-  vim.keymap.set('x', '<leader>ca', vim.lsp.buf.code_action, { buffer = bufnr })
+  nmap('<F4>', vim.lsp.buf.code_action, '[C]ode [A]ction')
+  vim.keymap.set('x', '<F4>', vim.lsp.buf.code_action, { buffer = bufnr })
 
   nmap('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
   nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
   nmap('gi', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-  nmap('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
+  nmap('go', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
@@ -45,15 +45,15 @@ local on_attach = function(client, bufnr)
   -- Diagnostic keymaps
   nmap('[d', vim.diagnostic.goto_prev)
   nmap(']d', vim.diagnostic.goto_next)
-  nmap('<leader>e', vim.diagnostic.open_float)
-  nmap('<leader>q', function()
+  nmap('gl', vim.diagnostic.open_float)
+  nmap('<leader>D', function()
     require('telescope.builtin').diagnostics({ bufnr = 0 })
   end)
 
   -- format the file
   if client.server_capabilities.documentFormattingProvider then
-    nmap('<leader>fm', vim.lsp.buf.format)
-    vim.keymap.set('x', '<leader>fm', vim.lsp.buf.format, { buffer = bufnr })
+    nmap('<F3>', vim.lsp.buf.format)
+    vim.keymap.set('x', '<F3>', vim.lsp.buf.format, { buffer = bufnr })
   end
   -- if client.supports_method("textDocument/formatting") then
   --   vim.keymap.set("n", "<Leader>f", function()
@@ -141,7 +141,7 @@ local on_attach = function(client, bufnr)
         vim.lsp.codelens.refresh()
       end,
     })
-    nmap('<leader>cl', vim.lsp.codelens.run, '[C]ode [L]ens')
+    nmap('<F5>', vim.lsp.codelens.run, '[C]ode [L]ens')
   end
 end
 
@@ -383,7 +383,7 @@ cmp.setup {
   },
   mapping = cmp.mapping.preset.insert {
     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-u>'] = cmp.mapping.scroll_docs(4),
     ['<C-Space>'] = cmp.mapping.complete(),
     ['<C-e>'] = cmp.mapping.close(),
     ['<CR>'] = cmp.mapping.confirm {
@@ -424,6 +424,7 @@ cmp.setup {
 
 -- Use buffer source for `/`
 cmp.setup.cmdline("/", {
+  mapping = cmp.mapping.preset.cmdline(),
   sources = {
     { name = "buffer" },
   },
@@ -431,6 +432,7 @@ cmp.setup.cmdline("/", {
 
 -- Use cmdline & path source for ':'
 cmp.setup.cmdline(":", {
+  mapping = cmp.mapping.preset.cmdline(),
   sources = cmp.config.sources({
     { name = "path" },
   }, {
