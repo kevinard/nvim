@@ -263,10 +263,6 @@ return {
   {
     'nvim-tree/nvim-tree.lua',
     dependencies = 'romgrk/barbar.nvim',
-    keys = {
-      { '<C-n>', '<cmd> NvimTreeToggle <CR>' },
-      { '<leader>o', '<cmd> NvimTreeFocus <CR>' },
-    },
     init = function ()
       -- Offset barbar when nvim-tree is visible
       local nvim_tree_events = require('nvim-tree.events')
@@ -287,6 +283,9 @@ return {
       nvim_tree_events.subscribe('TreeClose', function()
         bufferline_api.set_offset(0)
       end)
+
+      vim.api.nvim_set_keymap('n', '<C-n>', '<cmd> NvimTreeToggle <CR>', {})
+      vim.api.nvim_set_keymap('n', '<leader>o', '<cmd> NvimTreeFocus <CR>', {})
     end,
     opts = {
       on_attach = function (bufnr)
@@ -416,10 +415,8 @@ return {
       on_attach                    = function(bufnr)
         local gs = package.loaded.gitsigns
 
-        local function map(mode, l, r, opts)
-          opts = opts or {}
-          opts.buffer = bufnr
-          vim.keymap.set(mode, l, r, opts)
+        local function map(mode, l, r, desc)
+          vim.keymap.set(mode, l, r, { buffer = bufnr, desc = desc })
         end
 
         -- Actions
@@ -430,6 +427,43 @@ return {
         map('n', '<leader>td', gs.toggle_word_diff)
         map('n', '<leader>fd', gs.diffthis)
       end
+    },
+  },
+  {
+    'rcarriga/nvim-notify',
+    opts = {
+      icons = {
+        DEBUG = "",
+        ERROR = "",
+        INFO = "",
+        TRACE = "✎",
+        WARN = ""
+      },
+    },
+    init = function ()
+      vim.notify = require("notify")
+    end,
+  },
+  { 'MunifTanjim/nui.nvim', },
+  {
+    'folke/noice.nvim',
+    opts = {
+      lsp = {
+        -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+        override = {
+          ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+          ["vim.lsp.util.stylize_markdown"] = true,
+          ["cmp.entry.get_documentation"] = true,
+        },
+      },
+      -- you can enable a preset for easier configuration
+      presets = {
+        bottom_search = true, -- use a classic bottom cmdline for search
+        command_palette = true, -- position the cmdline and popupmenu together
+        long_message_to_split = true, -- long messages will be sent to a split
+        inc_rename = false, -- enables an input dialog for inc-rename.nvim
+        lsp_doc_border = true, -- add a border to hover docs and signature help
+      },
     },
   },
 }

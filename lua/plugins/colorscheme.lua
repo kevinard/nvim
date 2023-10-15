@@ -61,6 +61,8 @@ return {
         lsp = false,
       },
       noice = true,
+      notify = true,
+      semantic_tokens = true,
       indent_blankline = {
         enabled = true,
         scope_color = "", -- catppuccin color (eg. `lavender`) Default: text

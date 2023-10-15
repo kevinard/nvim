@@ -58,10 +58,11 @@ vim.opt.fillchars = { eob = " ", diff = "╱" }
 vim.opt.listchars:append "tab:>-,trail:·,eol:¬,nbsp:⋅,space:⋅"
 
 -- disable nvim intro
-vim.opt.shortmess:append "sI"
+vim.opt.shortmess:append "sIc"
 
 vim.opt.splitbelow = true
 vim.opt.splitright = true
+vim.opt.splitkeep = "screen"
 vim.opt.termguicolors = true
 vim.opt.timeoutlen = 400
 
@@ -71,3 +72,16 @@ vim.opt.whichwrap:append "<>[]hl"
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,preview,noinsert,noselect'
+
+vim.opt.formatoptions = vim.opt.formatoptions
+  - "a" -- Auto formatting is BAD.
+  - "t" -- Don't auto format my code. I got linters for that.
+  + "c" -- In general, I like it when comments respect textwidth
+  + "q" -- Allow formatting comments w/ gq
+  - "o" -- O and o, don't continue comments
+  + "r" -- But do continue when pressing enter.
+  + "n" -- Indent past the formatlistpat, not underneath it.
+  + "j" -- Auto-remove comments if possible.
+  - "2" -- I'm not in gradeschool anymore
+
+vim.opt.diffopt = { "internal", "filler", "closeoff", "hiddenoff", "algorithm:minimal" }

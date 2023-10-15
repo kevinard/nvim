@@ -33,9 +33,6 @@ return {
       'RRethy/nvim-treesitter-endwise',
       {
         'RRethy/vim-illuminate',
-        keys = {
-          { "<leader>i", "<cmd> IlluminateToggle <CR>" },
-        },
         opts = {
           -- providers: provider used to get references in the buffer, ordered by priority
           providers = {
@@ -70,14 +67,15 @@ return {
         },
         config = function (_, opts)
           require("illuminate").configure(opts)
+          vim.keymap.set("n", "<leader>i", "<cmd> IlluminateToggle <CR>")
         end
       },
     },
-    cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
-    keys = {
-      { "<c-space>", desc = "Increment selection" },
-      { "<bs>", desc = "Decrement selection", mode = "x" },
-    },
+    -- cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
+    -- keys = {
+    --   { "<c-space>", desc = "Increment selection" },
+    --   { "<bs>", desc = "Decrement selection", mode = "x" },
+    -- },
     opts = {
       sync_install = false,
       ensure_installed = {
