@@ -169,27 +169,6 @@ base_capabilities.textDocument.completion.completionItem = {
 
 local capabilities = require('cmp_nvim_lsp').default_capabilities(base_capabilities)
 
--- Setup mason so it can manage external tooling
-require('mason').setup {
-  ui = {
-    icons = {
-      package_installed = "✓",
-      package_uninstalled = "✗",
-      package_pending = "⟳",
-    },
-    keymaps = {
-      toggle_server_expand = "<CR>",
-      install_server = "i",
-      update_server = "u",
-      check_server_version = "c",
-      update_all_servers = "U",
-      check_outdated_servers = "C",
-      uninstall_server = "X",
-      cancel_installation = "<C-c>",
-    },
-  },
-}
-
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
 --
@@ -281,14 +260,6 @@ for _, server_name in ipairs(get_servers()) do
   })
 end
 
-require 'go'.setup({
-  goimport = 'gopls', -- if set to 'gopls' will use golsp format
-  gofmt = 'gopls',    -- if set to gopls will use golsp format
-  lsp_cfg = false,
-  lsp_gofumpt = true, -- true: set default gofmt in gopls format to gofumpt
-  dap_debug = true,
-})
-
 local format_sync_grp = vim.api.nvim_create_augroup("GoFormat", {})
 vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = "*.go",
@@ -298,12 +269,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   group = format_sync_grp,
 })
 
--- Turn on lsp status information
-require('fidget').setup {
-  window = {
-    blend = 0,
-  },
-}
 
 -- nvim-cmp setup
 local cmp = require 'cmp'
@@ -440,21 +405,6 @@ cmp.setup.cmdline(":", {
   }),
 })
 
-require("nvim-autopairs").setup {
-  check_ts = true,
-  enable_check_bracket_line = false,
-  fast_wrap = {
-    map = "<M-e>",
-    chars = { "{", "[", "(", '"', "'" },
-    pattern = string.gsub([[ [%'%"%)%>%]%)%}%,] ]], "%s+", ""),
-    offset = 0,
-    end_key = "$",
-    keys = "qwertyuiopzxcvbnmasdfghjkl",
-    check_comma = true,
-    highlight = "PmenuSel",
-    highlight_grey = "LineNr",
-  },
-}
 cmp.event:on(
   'confirm_done',
   require('nvim-autopairs.completion.cmp').on_confirm_done()
