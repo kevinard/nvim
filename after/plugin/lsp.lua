@@ -104,17 +104,17 @@ local on_attach = function(client, bufnr)
     severity_sort = true,
   }
 
-  vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+  --[[ vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
     border = "single",
-  })
-  vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+  }) ]]
+  --[[ vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
     border = "single",
     focusable = false,
     relative = "cursor",
-  })
+  }) ]]
 
   -- suppress error messages from lang servers
-  vim.notify = function(msg, log_level)
+  --[[ vim.notify = function(msg, log_level)
     if msg:match "exit code" then
       return
     end
@@ -123,7 +123,7 @@ local on_attach = function(client, bufnr)
     else
       vim.api.nvim_echo({ { msg } }, true, {})
     end
-  end
+  end ]]
 
   -- Borders for LspInfo window
   require('lspconfig.ui.windows').default_options.border = 'single'
@@ -142,6 +142,20 @@ local on_attach = function(client, bufnr)
       end,
     })
     nmap('<F5>', vim.lsp.codelens.run, '[C]ode [L]ens')
+  end
+
+  if client.name == "gopls" then
+    if not client.server_capabilities.semanticTokensProvider then
+      local semantic = client.config.capabilities.textDocument.semanticTokens
+      client.server_capabilities.semanticTokensProvider = {
+        full = true,
+        legend = {
+          tokenTypes = semantic.tokenTypes,
+          tokenModifiers = semantic.tokenModifiers,
+        },
+        range = true,
+      }
+    end
   end
 end
 
@@ -166,6 +180,7 @@ base_capabilities.textDocument.completion.completionItem = {
     },
   },
 }
+base_capabilities.workspace.didChangeWatchedFiles.dynamicRegistration = true
 
 local capabilities = require('cmp_nvim_lsp').default_capabilities(base_capabilities)
 
@@ -235,6 +250,14 @@ local servers = {
   marksman = {},
   solargraph = {
     diagnostics = true,
+    completion = true,
+    hover = true,
+    formatting = true,
+    symbols = true,
+    definitions = true,
+    rename = true,
+    references = true,
+    logLevel = "warn",
   },
   terraformls = {},
   lua_ls = {
@@ -299,18 +322,34 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 })
 
 -- Turn on lsp status information
-require('fidget').setup {
+--[[ require('fidget').setup {
   window = {
     blend = 0,
   },
-}
+} ]]
 
 -- nvim-cmp setup
 local cmp = require 'cmp'
 local luasnip = require 'luasnip'
+local ls_types = require 'luasnip.util.types'
+
+luasnip.config.set_config {
+  history = false,
+  updateevents = "TextChanged,TextChangedI",
+  enable_autosnippets = true,
+  ext_opts = {
+    [ls_types.choiceNode] = {
+      active = {
+        virt_text = { { " « ", "NonTest" } },
+      },
+    },
+  },
+}
 
 require("luasnip.loaders.from_vscode").lazy_load()
 luasnip.filetype_extend("ruby", {"rails"})
+
+vim.api.nvim_set_hl(0, "CmpGhostText", { link = "Comment", default = true })
 
 local kind_icons = {
   Namespace = "",
@@ -360,7 +399,7 @@ cmp.setup {
   window = {
     completion = {
       border = "single",
-      winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
+      winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None,Pmenu:Pmenu,PmenuSel:PmenuSel",
       side_padding = 1,
       scrollbar = false,
     },
@@ -412,13 +451,49 @@ cmp.setup {
       end
     end, { 'i', 's' }),
   },
+  sorting = {
+    -- TODO: Would be cool to add stuff like "See variable names before method names" in rust, or something like that.
+    comparators = {
+      cmp.config.compare.offset,
+      cmp.config.compare.exact,
+      cmp.config.compare.score,
+
+      -- copied from cmp-under, but I don't think I need the plugin for this.
+      -- I might add some more of my own.
+      function(entry1, entry2)
+        local _, entry1_under = entry1.completion_item.label:find "^_+"
+        local _, entry2_under = entry2.completion_item.label:find "^_+"
+        entry1_under = entry1_under or 0
+        entry2_under = entry2_under or 0
+        if entry1_under > entry2_under then
+          return false
+        elseif entry1_under < entry2_under then
+          return true
+        end
+      end,
+
+      cmp.config.compare.kind,
+      cmp.config.compare.sort_text,
+      cmp.config.compare.length,
+      cmp.config.compare.order,
+    },
+  },
   sources = {
-    { name = 'nvim_lsp' },
     { name = 'nvim_lua' },
+    { name = 'nvim_lsp' },
     { name = "treesitter" },
-    { name = "buffer" },
     { name = 'luasnip' },
     { name = "path" },
+    { name = "buffer", keyword_lenght = 5 },
+  },
+  view = {
+    -- entries = "native"
+    entries = "custom"
+  },
+  experimental = {
+    ghost_text = {
+      hl_group = "CmpGhostText",
+    },
   },
 }
 
@@ -427,6 +502,9 @@ cmp.setup.cmdline("/", {
   mapping = cmp.mapping.preset.cmdline(),
   sources = {
     { name = "buffer" },
+  },
+  view = {
+    entries = "custom"
   },
 })
 
@@ -438,6 +516,9 @@ cmp.setup.cmdline(":", {
   }, {
     { name = "cmdline" },
   }),
+  view = {
+    entries = "custom"
+  },
 })
 
 require("nvim-autopairs").setup {

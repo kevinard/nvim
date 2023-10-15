@@ -42,6 +42,9 @@ require("catppuccin").setup({
     mason = true,
     which_key = true,
     fidget = true,
+    noice = true,
+    notify = true,
+    semantic_tokens = true,
     illuminate = true,
     indent_blankline = {
       enabled = true,

@@ -43,6 +43,7 @@ vim.keymap.set("v", "<Tab>", ">gv")
 vim.keymap.set({"v", "x"}, "p", [["_dP]])
 -- delete the selection without adding it to the paste buffer
 vim.keymap.set({"n", "v"}, "<leader>d", [["_d]])
+vim.keymap.set({"n", "v"}, "<leader>c", [["_c]])
 
 -- paste from the system clipboard
 vim.keymap.set("i", "<C-v>", "<C-r>+")
@@ -123,3 +124,6 @@ vim.keymap.set("n", "-", "<c-x>")
 
 -- Select all
 vim.keymap.set("n", "<C-a>", "gg0vG$")
+
+-- Search word under cursor
+vim.keymap.set("n", "gw", "*N")
