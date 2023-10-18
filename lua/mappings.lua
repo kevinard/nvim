@@ -30,8 +30,15 @@ vim.keymap.set("n", "L", "$")
 -- keep the cursor in the middle of the screen when scrolling up and down and through searches
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
-vim.keymap.set("n", "n", "nzzzv")
-vim.keymap.set("n", "N", "Nzzzv")
+-- vim.keymap.set("n", "n", "nzzzv")
+-- vim.keymap.set("n", "N", "Nzzzv")
+vim.keymap.set({"n", "x", "o"}, "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next search result" })
+vim.keymap.set({"n", "x", "o"}, "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev search result" })
+
+-- Add undo break-points
+vim.keymap.set("i", ",", ",<c-g>u")
+vim.keymap.set("i", ".", ".<c-g>u")
+vim.keymap.set("i", ";", ";<c-g>u")
 
 -- Better indent
 vim.keymap.set("v", "<", "<gv")
@@ -70,7 +77,7 @@ vim.keymap.set("i", "<C-k>", "<Up>")
 vim.keymap.set("i", "<C-l>", "<Right>")
 
 -- no highlight
-vim.keymap.set("n", "<ESC>", "<cmd> noh <CR>")
+vim.keymap.set({"n", "i"}, "<ESC>", "<cmd> noh <CR> <ESC>")
 
 -- switch between windows
 -- vim.keymap.set("n", "<C-h>", "<C-w>h")
@@ -83,8 +90,8 @@ vim.keymap.set("n", "<ESC>", "<cmd> noh <CR>")
 -- vim.keymap.set("n", "<C-Right>", "<C-w>l")
 
 -- save file
-vim.keymap.set("n", "<C-s>", "<cmd> w <CR>")
-vim.keymap.set("i", "<C-s>", "<Esc>:w<CR>")
+vim.keymap.set({"n", "i", "x", "s"}, "<C-s>", "<cmd> w <CR> <ESC>")
+-- vim.keymap.set("i", "<C-s>", "<Esc>:w<CR>")
 
 -- copy whole file
 vim.keymap.set("n", "<C-c>", "<cmd> %y+ <CR>")
@@ -99,6 +106,19 @@ vim.keymap.set("n", "<leader>rn", "<cmd> set rnu! <CR>")
 
 -- new buffer
 vim.keymap.set("n", "<leader>b", "<cmd> enew <CR>")
+
+-- diagnostic
+local diagnostic_goto = function(next, severity)
+  local go = next and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
+  severity = severity and vim.diagnostic.severity[severity] or nil
+  return function()
+    go({ severity = severity })
+  end
+end
+vim.keymap.set("n", "]e", diagnostic_goto(true, "ERROR"), { desc = "Next Error" })
+vim.keymap.set("n", "[e", diagnostic_goto(false, "ERROR"), { desc = "Prev Error" })
+vim.keymap.set("n", "]w", diagnostic_goto(true, "WARN"), { desc = "Next Warning" })
+vim.keymap.set("n", "[w", diagnostic_goto(false, "WARN"), { desc = "Prev Warning" })
 
 -- Quit all
 vim.keymap.set("n", "<leader>qq", "<cmd> qall <CR>")
@@ -127,3 +147,5 @@ vim.keymap.set("n", "<C-a>", "gg0vG$")
 
 -- Search word under cursor
 vim.keymap.set("n", "gw", "*N")
+
+vim.keymap.set("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" })

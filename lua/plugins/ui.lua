@@ -203,6 +203,9 @@ return {
   },
   {
     'nvim-lualine/lualine.nvim',
+    dependencies = {
+      'lewis6991/gitsigns.nvim',
+    },
     opts = {
       options = {
         icons_enabled = true,
@@ -265,24 +268,24 @@ return {
     dependencies = 'romgrk/barbar.nvim',
     init = function ()
       -- Offset barbar when nvim-tree is visible
-      local nvim_tree_events = require('nvim-tree.events')
-      local bufferline_api = require('bufferline.api')
-
-      local function get_tree_size()
-        return require 'nvim-tree.view'.View.width
-      end
-
-      nvim_tree_events.subscribe('TreeOpen', function()
-        bufferline_api.set_offset(get_tree_size())
-      end)
-
-      nvim_tree_events.subscribe('Resize', function()
-        bufferline_api.set_offset(get_tree_size())
-      end)
-
-      nvim_tree_events.subscribe('TreeClose', function()
-        bufferline_api.set_offset(0)
-      end)
+      -- local nvim_tree_events = require('nvim-tree.events')
+      -- local bufferline_api = require('bufferline.api')
+      --
+      -- local function get_tree_size()
+      --   return require 'nvim-tree.view'.View.width
+      -- end
+      --
+      -- nvim_tree_events.subscribe('TreeOpen', function()
+      --   bufferline_api.set_offset(get_tree_size())
+      -- end)
+      --
+      -- nvim_tree_events.subscribe('Resize', function()
+      --   bufferline_api.set_offset(get_tree_size())
+      -- end)
+      --
+      -- nvim_tree_events.subscribe('TreeClose', function()
+      --   bufferline_api.set_offset(0)
+      -- end)
 
       vim.api.nvim_set_keymap('n', '<C-n>', '<cmd> NvimTreeToggle <CR>', {})
       vim.api.nvim_set_keymap('n', '<leader>o', '<cmd> NvimTreeFocus <CR>', {})

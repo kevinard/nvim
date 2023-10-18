@@ -42,11 +42,18 @@ vim.opt.title = true
 vim.opt.clipboard = "unnamedplus"
 vim.opt.cursorline = true
 vim.opt.ruler = false
-vim.opt.scrolloff = 5
+vim.opt.scrolloff = 4
+vim.opt.sidescrolloff = 8
+
+vim.opt.spelllang = { "en", "fr" }
+vim.opt.virtualedit = "block"
+vim.opt.wildmode = "longest:full,full"
+vim.opt.winminwidth = 5
 
 -- Indenting
 vim.opt.expandtab = true
 vim.opt.smarttab = true
+vim.opt.shiftround = true
 vim.opt.shiftwidth = 2
 vim.opt.smartindent = true
 vim.o.breakindent = true
@@ -85,3 +92,16 @@ vim.opt.formatoptions = vim.opt.formatoptions
   - "2" -- I'm not in gradeschool anymore
 
 vim.opt.diffopt = { "internal", "filler", "closeoff", "hiddenoff", "algorithm:minimal" }
+
+vim.opt.grepformat = "%f:%l:%c:%m"
+vim.opt.grepprg = "rg --vimgrep"
+
+vim.opt.pumblend = 10 -- Popup blend
+vim.opt.pumheight = 10 -- Maximum number of entries in a popup
+
+if vim.fn.has("nvim-0.10") == 1 then
+  vim.opt.smoothscroll = true
+end
+
+-- Fix markdown indentation settings
+vim.g.markdown_recommended_style = 0
