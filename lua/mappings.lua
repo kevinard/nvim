@@ -77,7 +77,7 @@ vim.keymap.set("i", "<C-k>", "<Up>")
 vim.keymap.set("i", "<C-l>", "<Right>")
 
 -- no highlight
-vim.keymap.set({"n", "i"}, "<ESC>", "<cmd> noh <CR> <ESC>")
+vim.keymap.set({"n", "i"}, "<ESC>", "<cmd>noh<CR><ESC>")
 
 -- switch between windows
 -- vim.keymap.set("n", "<C-h>", "<C-w>h")
