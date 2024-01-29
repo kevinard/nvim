@@ -55,29 +55,32 @@ return {
       -- },
     },
   },
-  -- {
-  --   'sindrets/diffview.nvim',
-  --   dependencies = 'nvim-lua/plenary.nvim',
-  --   keys = {
-  --     { "<leader>gd", "<cmd> DiffviewOpen <CR>" },
-  --     { "<leader>gc", "<cmd> DiffviewClose <CR>" },
-  --     { "<leader>gh", "<cmd> DiffviewFileHistory % <CR>" },
-  --   },
-  --   opts = {
-  --     enhanced_diff_hl = true,
-  --     view = {
-  --       merge_tool = {
-  --         layout = "diff3_mixed",
-  --       },
-  --     },
-  --     hooks = {
-  --       diff_buf_read = function(bufnr)
-  --         -- Change local options in diff buffers
-  --         vim.opt_local.wrap = false
-  --         vim.opt_local.list = false
-  --         vim.opt_local.colorcolumn = { 80 }
-  --       end,
-  --     }
-  --   },
-  -- },
+  {
+    "sindrets/diffview.nvim",
+    dependencies = "nvim-lua/plenary.nvim",
+    keys = {
+      { "<leader>gd", "<cmd> DiffviewOpen <CR>" },
+      -- { "<leader>gc", "<cmd> DiffviewClose <CR>" },
+      -- { "<leader>gh", "<cmd> DiffviewFileHistory % <CR>" },
+    },
+    cmd = {
+      "DiffviewOpen",
+    },
+    opts = {
+      enhanced_diff_hl = true,
+      view = {
+        merge_tool = {
+          layout = "diff3_mixed",
+        },
+      },
+      hooks = {
+        diff_buf_read = function(bufnr)
+          -- Change local options in diff buffers
+          vim.opt_local.wrap = false
+          vim.opt_local.list = false
+          vim.opt_local.colorcolumn = { 80 }
+        end,
+      },
+    },
+  },
 }
