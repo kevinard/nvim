@@ -2,10 +2,6 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
--- better indenting
-vim.keymap.set("v", "<S-Tab>", "<gv")
-vim.keymap.set("v", "<Tab>", ">gv")
-
 -- quit
 vim.keymap.set("n", "<c-q>", "<cmd>qa<cr>", { desc = "Quit all" })
 
