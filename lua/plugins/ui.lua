@@ -35,12 +35,12 @@ return {
       },
     },
   },
-  {
-    "echasnovski/mini.indentscope",
-    opts = {
-      symbol = "▏",
-    },
-  },
+  -- {
+  --   "echasnovski/mini.indentscope",
+  --   opts = {
+  --     symbol = "▏",
+  --   },
+  -- },
   {
     "nvim-lualine/lualine.nvim",
     opts = {
