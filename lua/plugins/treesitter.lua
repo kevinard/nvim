@@ -11,6 +11,7 @@ return {
       })
 
       opts.highlight = {
+        enable = true,
         disable = function()
           -- check if 'filetype' option includes 'chezmoitmpl'
           if string.find(vim.bo.filetype, "chezmoitmpl") then

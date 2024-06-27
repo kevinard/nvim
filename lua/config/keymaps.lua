@@ -17,7 +17,7 @@ vim.keymap.set("i", "<C-v>", "<C-r>+")
 -- command mode
 vim.keymap.set({ "n", "x" }, ";", ":", { nowait = true })
 -- make the current file executable
-vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
+vim.keymap.set("n", "<leader>fx", "<cmd>!chmod +x %<CR>", { silent = true })
 
 -- copy whole file
 vim.keymap.set("n", "<C-c>", "<cmd> %y+ <CR>")
