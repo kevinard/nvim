@@ -3,12 +3,6 @@ return {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
-        ansiblels = {},
-        bashls = {},
-        dockerls = {},
-        docker_compose_language_service = {},
-        terraformls = {},
-        marksman = {},
         gopls = {
           capabilities = {
             textDocument = {
@@ -68,29 +62,29 @@ return {
               },
               codelenses = {
                 gc_details = true,
-                generate = true,
-                regenerate_cgo = true,
-                run_govulncheck = true,
-                test = true,
-                tidy = true,
-                upgrade_dependency = true,
-                vendor = true,
+                -- generate = true,
+                -- regenerate_cgo = true,
+                -- run_govulncheck = true,
+                -- test = true,
+                -- tidy = true,
+                -- upgrade_dependency = true,
+                -- vendor = true,
               },
-              hints = {
-                assignVariableTypes = true,
-                compositeLiteralFields = true,
-                compositeLiteralTypes = true,
-                constantValues = true,
-                functionTypeParameters = true,
-                parameterNames = true,
-                rangeVariableTypes = true,
-              },
-              gofumpt = true,
-              directoryFilters = { "-.git", "-.vscode", "-.idea", "-.vscode-test", "-node_modules" },
-              usePlaceholders = true,
-              semanticTokens = true,
-              completeUnimported = true,
-              staticcheck = true,
+              -- hints = {
+              --   assignVariableTypes = true,
+              --   compositeLiteralFields = true,
+              --   compositeLiteralTypes = true,
+              --   constantValues = true,
+              --   functionTypeParameters = true,
+              --   parameterNames = true,
+              --   rangeVariableTypes = true,
+              -- },
+              -- gofumpt = true,
+              -- directoryFilters = { "-.git", "-.vscode", "-.idea", "-.vscode-test", "-node_modules" },
+              -- usePlaceholders = true,
+              -- semanticTokens = true,
+              -- completeUnimported = true,
+              -- staticcheck = true,
               matcher = "Fuzzy",
               diagnosticsDelay = "500ms",
               symbolMatcher = "fuzzy",
@@ -98,23 +92,6 @@ return {
               ["local"] = "github.com/Scalingo",
             },
           },
-          -- NOTE: it is important to add handler to formatting handlers
-          -- the async formatter will call these handlers when gopls responed
-          -- without these handlers, the file will not be saved
-          -- handlers = {
-          --   [range_format] = function(...)
-          --     vim.lsp.handlers[range_format](...)
-          --     if vfn.getbufinfo("%")[1].changed == 1 then
-          --       vim.cmd("noautocmd write")
-          --     end
-          --   end,
-          --   [formatting] = function(...)
-          --     vim.lsp.handlers[formatting](...)
-          --     if vfn.getbufinfo("%")[1].changed == 1 then
-          --       vim.cmd("noautocmd write")
-          --     end
-          --   end,
-          -- },
         },
         solargraph = {
           settings = {
@@ -135,7 +112,7 @@ return {
           settings = {
             Lua = {
               telemetry = { enable = false },
-              hint = { enable = true },
+              -- hint = { enable = true },
               runtime = {
                 -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
                 version = "LuaJIT",
@@ -160,16 +137,5 @@ return {
         },
       },
     },
-  },
-  {
-    "williamboman/mason.nvim",
-    opts = function(_, opts)
-      opts.ensure_installed = opts.ensure_installed or {}
-      vim.list_extend(opts.ensure_installed, {
-        "stylua",
-        "shfmt",
-        "tflint",
-      })
-    end,
   },
 }
